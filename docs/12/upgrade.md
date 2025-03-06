@@ -4,141 +4,93 @@ title: 升级指南
 order: 1
 toc: content
 ---
+# 升级指南
+## 从 11.x 升级到 12.0
 
+#### 预计升级时间：5 分钟
+> 我们尝试记录所有可能的重大更改。由于其中一些重大更改位于框架中不太显眼的部分，因此只有部分更改可能真正影响您的应用程序。想节省时间？您可以使用 [Laravel Shift](https://laravelshift.com/) 来帮助自动升级您的应用程序。
 
-# Upgrade Guide
+### 更新依赖项
 
-- [Upgrading To 12.0 From 11.x](#upgrade-12.0)
+**影响可能性：高**
 
-<a name="high-impact-changes"></a>
-## High Impact Changes
+您应该在应用程序的 `composer.json` 文件中更新以下依赖项：
 
-<div class="content-list" markdown="1">
+- `laravel/framework` 到 `^12.0`
+- `phpunit/phpunit` 到 `^11.0`
+- `pestphp/pest` 到 `^3.0`
 
-- [Updating Dependencies](#updating-dependencies)
-- [Updating the Laravel Installer](#updating-the-laravel-installer)
-
-</div>
-
-<a name="medium-impact-changes"></a>
-## Medium Impact Changes
-
-<div class="content-list" markdown="1">
-
-- [Models and UUIDv7](#models-and-uuidv7)
-
-</div>
-
-<a name="low-impact-changes"></a>
-## Low Impact Changes
-
-<div class="content-list" markdown="1">
-
-- [Carbon 3](#carbon-3)
-- [Concurrency Result Index Mapping](#concurrency-result-index-mapping)
-- [Image Validation Now Excludes SVGs](#image-validation)
-- [Multi-Schema Database Inspecting](#multi-schema-database-inspecting)
-- [Nested Array Request Merging](#nested-array-request-merging)
-
-</div>
-
-<a name="upgrade-12.0"></a>
-## Upgrading To 12.0 From 11.x
-
-#### Estimated Upgrade Time: 5 Minutes
-
-> [!NOTE]
-> We attempt to document every possible breaking change. Since some of these breaking changes are in obscure parts of the framework only a portion of these changes may actually affect your application. Want to save time? You can use [Laravel Shift](https://laravelshift.com/) to help automate your application upgrades.
-
-<a name="updating-dependencies"></a>
-### Updating Dependencies
-
-**Likelihood Of Impact: High**
-
-You should update the following dependencies in your application's `composer.json` file:
-
-<div class="content-list" markdown="1">
-
-- `laravel/framework` to `^12.0`
-- `phpunit/phpunit` to `^11.0`
-- `pestphp/pest` to `^3.0`
-
-</div>
-
-<a name="carbon-3"></a>
 #### Carbon 3
 
-**Likelihood Of Impact: Low**
+**影响可能性：低**
 
-Support for [Carbon 2.x](https://carbon.nesbot.com/docs/) has been removed. All Laravel 12 applications now require [Carbon 3.x](https://carbon.nesbot.com/docs/#api-carbon-3).
+已删除对 [Carbon 2.x](https://carbon.nesbot.com/docs/) 的支持。所有 Laravel 12 应用程序现在都需要 [Carbon 3.x](https://carbon.nesbot.com/docs/#api-carbon-3)。
 
-<a name="updating-the-laravel-installer"></a>
-### Updating the Laravel Installer
+### 更新 Laravel 安装程序
 
-If you are using the Laravel installer CLI tool to create new Laravel applications, you should update your installer installation to be compatible with Laravel 12.x and the [new Laravel starter kits](https://laravel.com/starter-kits). If you installed the Laravel installer via `composer global require`, you may update the installer using `composer global update`:
+如果您使用 Laravel 安装程序 CLI 工具创建新的 Laravel 应用程序，则应更新安装程序安装以与 Laravel 12.x 和 [新的 Laravel 入门套件](https://laravel.com/starter-kits) 兼容。如果您通过 `composer global require` 安装了 Laravel 安装程序，则可以使用 `composer global update` 更新安装程序：
 
 ```shell
 composer global update laravel/installer
 ```
 
-If you originally installed PHP and Laravel via `php.new`, you may simply re-run the `php.new` installation commands for your operating system to install the latest version of PHP and the Laravel installer:
+如果您最初通过 `php.new` 安装了 PHP 和 Laravel，则只需重新运行操作系统的 `php.new` 安装命令即可安装最新版本的 PHP 和 Laravel 安装程序：
 
-```shell tab=macOS
+:::code-group
+
+```shell [macOS] 
 /bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.4)"
 ```
 
-```shell tab=Windows PowerShell
-# Run as administrator...
+```shell [Windows PowerShell]
+# 以管理员身份运行...
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.4'))
 ```
 
-```shell tab=Linux
+```shell [Linux]
 /bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.4)"
 ```
 
-Or, if you are using [Laravel Herd's](https://herd.laravel.com) bundled copy of the Laravel installer, you should update your Herd installation to the latest release.
+:::
+或者，如果您使用的是 [Laravel Herd](https://herd.laravel.com) 捆绑的 Laravel 安装程序副本，则应将 Herd 安装更新到最新版本。
 
-<a name="concurrency"></a>
-### Concurrency
+### 并发
 
-<a name="concurrency-result-index-mapping"></a>
-#### Concurrency Result Index Mapping
+#### 并发结果索引映射
 
-**Likelihood Of Impact: Low**
+**影响可能性：低**
 
-When invoking the `Concurrency::run` method with an associative array, the results of the concurrent operations are now returned with their associated keys:
+使用关联数组调用 `Concurrency::run` 方法时，并发操作的结果现在会与其关联键一起返回：
 
 ```php
 $result = Concurrency::run([
-    'task-1' => fn () => 1 + 1,
-    'task-2' => fn () => 2 + 2,
+  'task-1' => fn () => 1 + 1,
+  'task-2' => fn () => 2 + 2,
 ]);
 
 // ['task-1' => 2, 'task-2' => 4]
 ```
 
-<a name="database"></a>
-### Database
+### 数据库
 
-<a name="multi-schema-database-inspecting"></a>
-#### Multi-Schema Database Inspecting
+#### 多模式数据库检查
 
-**Likelihood Of Impact: Low**
+**影响可能性：低**
 
-The `Schema::getTables()`, `Schema::getViews()`, and `Schema::getTypes()` methods now include the results from all schemas by default. You may pass the `schema` argument to retrieve the result for the given schema only:
+`Schema::getTables()`、`Schema::getViews()` 和 `Schema::getTypes()` 方法现在默认包含所有模式的结果。您可以传递 `schema` 参数来仅检索给定架构的结果：
 
 ```php
-// All tables on all schemas...
+// 所有架构上的所有表...
 $tables = Schema::getTables();
 
-// All tables on the 'main' schema...
+// “main”架构上的所有表...
 $table = Schema::getTables(schema: 'main');
 
-// All tables on the 'main' and 'blog' schemas...
+// “main”和“blog”架构上的所有表...
 $table = Schema::getTables(schema: ['main', 'blog']);
 ```
 
-The `Schema::getTableListing()` method now returns schema-qualified table names by default. You may pass the `schemaQualified` argument to change the behavior as desired:
+`Schema::getTableListing()` 方法现在默认返回架构限定的表名。您可以传递 `schemaQualified` 参数来根据需要更改行为：
 
 ```php
 $tables = Schema::getTableListing();
@@ -151,59 +103,52 @@ $table = Schema::getTableListing(schema: 'main', schemaQualified: false);
 // ['migrations', 'users']
 ```
 
-The `db:table` and `db:show` commands now output the results of all schemas on MySQL, MariaDB, and SQLite, just like PostgreSQL and SQL Server.
+`db:table` 和 `db:show` 命令现在输出 MySQL、MariaDB 和 SQLite 上所有架构的结果，就像 PostgreSQL 和 SQL Server 一样。
 
-<a name="eloquent"></a>
 ### Eloquent
 
-<a name="models-and-uuidv7"></a>
-#### Models and UUIDv7
+#### 模型和 UUIDv7
 
-**Likelihood Of Impact: Medium**
+**影响可能性：中等**
 
-The `HasUuids` trait now returns UUIDs that are compatible with version 7 of the UUID spec (ordered UUIDs). If you would like to continue using ordered UUIDv4 strings for your model's IDs, you should now use the `HasVersion4Uuids` trait:
+`HasUuids` 特征现在返回与 UUID 规范版本 7 兼容的 UUID（有序 UUID）。如果您想继续使用有序的 UUIDv4 字符串作为模型的 ID，您现在应该使用 `HasVersion4Uuids` 特征：
 
 ```php
-use Illuminate\Database\Eloquent\Concerns\HasUuids; // [tl! remove]
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids; // [tl! add]
+- use Illuminate\Database\Eloquent\Concerns\HasUuids; 
++ use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids; 
 ```
 
-The `HasVersion7Uuids` trait has been removed. If you were previously using this trait, you should use the `HasUuids` trait instead, which now provides the same behavior.
+`HasVersion7Uuids` 特征已被删除。如果您之前使用此特征，则应改用 `HasUuids` 特征，它现在提供相同的行为。
 
-<a name="requests"></a>
-### Requests
+### 请求
 
-<a name="nested-array-request-merging"></a>
-#### Nested Array Request Merging
+#### 嵌套数组请求合并
 
-**Likelihood Of Impact: Low**
+**影响可能性：低**
 
-The `$request->mergeIfMissing()` method now allows merging nested array data using "dot" notation. If you were previously relying on this method to create a top-level array key containing the "dot" notation version of the key, you may need to adjust your application to account for this new behavior:
+`$request->mergeIfMissing()` 方法现在允许使用“点”符号合并嵌套数组数据。如果您以前依赖此方法创建包含“点”符号版本的键的顶级数组键，则可能需要调整应用程序以考虑此新行为：
 
 ```php
 $request->mergeIfMissing([
-    'user.last_name' => 'Otwell',
+'user.last_name' => 'Otwell',
 ]);
 ```
 
-<a name="validation"></a>
-### Validation
+### 验证
 
-<a name="image-validation"></a>
-#### Image Validation Now Excludes SVGs
+#### 图像验证现在排除 SVG
 
-The `image` validation rule no longer allows SVG images by default. If you would like to allow SVGs when using the `image` rule, you must explicitly allow them:
+`image` 验证规则默认不再允许 SVG 图像。如果您想在使用 `image` 规则时允许 SVG，则必须明确允许它们：
 
 ```php
 use Illuminate\Validation\Rules\File;
 
 'photo' => 'required|image:allow_svg'
 
-// Or...
+// 或者...
 'photo' => ['required', File::image(allowSvg: true)],
 ```
 
-<a name="miscellaneous"></a>
-### Miscellaneous
+### 杂项
 
-We also encourage you to view the changes in the `laravel/laravel` [GitHub repository](https://github.com/laravel/laravel). While many of these changes are not required, you may wish to keep these files in sync with your application. Some of these changes will be covered in this upgrade guide, but others, such as changes to configuration files or comments, will not be. You can easily view the changes with the [GitHub comparison tool](https://github.com/laravel/laravel/compare/11.x...12.x) and choose which updates are important to you.
+我们还鼓励您查看 `laravel/laravel` [GitHub 存储库](https://github.com/laravel/laravel) 中的更改。虽然其中许多更改不是必需的，但您可能希望将这些文件与您的应用程序保持同步。本升级指南将介绍其中一些更改，但其他更改（例如对配置文件或注释的更改）则不会介绍。您可以使用 [GitHub 比较工具](https://github.com/laravel/laravel/compare/11.x...12.x) 轻松查看更改，并选择对您来说重要的更新。
